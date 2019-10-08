@@ -1,0 +1,18 @@
+<resources>
+
+    <string name="app_name">PhishApp</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="sign_in">Sign In</string>
+    <string name="register">Register</string>
+    <string name="email">Email</string>
+    <string name="pass">Password</string>
+    <string name="re_pass">Retype Password</string>
+    <string name="credentials_key">Credentials Key</string>
+
+    <string name="login_frag">Login Fragment</string>
+    <string name="register_frag">Register Fragment</string>
+    <string name="success_frag">Success Fragment</string>
+
+
+</resources>
