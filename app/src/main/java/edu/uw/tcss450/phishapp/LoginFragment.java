@@ -15,6 +15,9 @@ import android.widget.EditText;
 import java.io.Serializable;
 import edu.uw.tcss450.phishapp.model.Credentials;
 
+
+// Joel's comment 10/08/2019
+
 public class LoginFragment extends Fragment {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
