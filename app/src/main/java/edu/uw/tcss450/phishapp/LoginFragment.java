@@ -15,14 +15,10 @@ import android.widget.EditText;
 import java.io.Serializable;
 import edu.uw.tcss450.phishapp.model.Credentials;
 
-<<<<<<< HEAD
 
 // Joel's comment 10/08/2019
-=======
 //Hi Joel
 //HIIIIIII JOEEEEL
->>>>>>> 04d0b4f668684d0b39e93ac58e017b9656443934
-
 public class LoginFragment extends Fragment {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -129,6 +125,7 @@ public class LoginFragment extends Fragment {
 
         return toReturn;
     }
+//Spooky scary skeletons
 
     private void onLoginSuccess(Credentials theCredentials, String jwt) {
         Bundle bundle = new Bundle();
