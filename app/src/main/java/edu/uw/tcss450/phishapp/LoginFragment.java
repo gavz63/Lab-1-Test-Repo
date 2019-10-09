@@ -16,6 +16,8 @@ import java.io.Serializable;
 import edu.uw.tcss450.phishapp.model.Credentials;
 
 //Hi Joel
+//HIIIIIII JOEEEEL
+
 public class LoginFragment extends Fragment {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
