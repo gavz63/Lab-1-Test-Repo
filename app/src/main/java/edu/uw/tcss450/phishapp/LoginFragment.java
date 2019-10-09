@@ -15,8 +15,8 @@ import android.widget.EditText;
 import java.io.Serializable;
 import edu.uw.tcss450.phishapp.model.Credentials;
 
-
-// Joel's comment 10/08/2019
+// Joement 10/08/2019
+// Joel's comment 10/08/2019 - 2
 //Hi Joel
 //HIIIIIII JOEEEEL
 public class LoginFragment extends Fragment {
