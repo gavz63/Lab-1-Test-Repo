@@ -126,6 +126,7 @@ public class LoginFragment extends Fragment {
         return toReturn;
     }
 //Spooky scary skeletons
+// Send shivers down your spine.
 
     private void onLoginSuccess(Credentials theCredentials, String jwt) {
         Bundle bundle = new Bundle();
