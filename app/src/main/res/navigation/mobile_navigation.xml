@@ -13,8 +13,8 @@
 
     <fragment
         android:id="@+id/nav_blog"
-        android:name="edu.uw.tcss450.phishapp.ui.gallery.GalleryFragment"
-        android:label="@string/menu_gallery"
-        tools:layout="@layout/fragment_gallery" />
+        android:name="edu.uw.tcss450.phishapp.BlogFragment"
+        android:label="@string/menu_blog"
+        tools:layout="@layout/fragment_blog_list" />
 
 </navigation>
