@@ -11,9 +11,6 @@
         android:label="fragment_login"
         tools:layout="@layout/fragment_login" >
         <action
-            android:id="@+id/action_loginFragment_to_successFragment"
-            app:destination="@id/successFragment" />
-        <action
             android:id="@+id/action_loginFragment_to_registerFragment"
             app:destination="@id/registerFragment" />
         <action
@@ -32,11 +29,6 @@
             android:id="@+id/action_registerFragment_to_homeActivity"
             app:destination="@id/homeActivity" />
     </fragment>
-    <fragment
-        android:id="@+id/successFragment"
-        android:name="edu.uw.tcss450.phishapp.SuccessFragment"
-        android:label="fragment_success"
-        tools:layout="@layout/fragment_success" />
     <activity
         android:id="@+id/homeActivity"
         android:name="edu.uw.tcss450.phishapp.HomeActivity"
