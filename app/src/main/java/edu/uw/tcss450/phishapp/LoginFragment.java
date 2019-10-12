@@ -71,6 +71,12 @@ public class LoginFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        //Comment out this block before going to prod
+        EditText email = view.findViewById(R.id.login_email);
+        EditText pass = view.findViewById(R.id.login_pass);
+        email.setText("gavz63@uw.edu");
+        pass.setText("poopenstein");
+
         Button b = view.findViewById(R.id.button_login_register);
         b.setOnClickListener(v -> this.onRegisterClicked());
 
@@ -139,7 +145,7 @@ public class LoginFragment extends Fragment {
         if (nd.getId() != R.id.loginFragment) {
             nc.navigateUp();
         } else {
-            nc.navigate(R.id.action_loginFragment_to_successFragment, bundle);
+            nc.navigate(R.id.action_loginFragment_to_homeActivity, bundle);
         }
     }
 

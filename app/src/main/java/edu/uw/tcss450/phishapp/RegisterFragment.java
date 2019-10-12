@@ -136,7 +136,7 @@ public class RegisterFragment extends Fragment {
         if (nd.getId() != R.id.registerFragment) {
             nc.navigateUp();
         } else {
-            nc.navigate(R.id.action_registerFragment_to_loginFragment, bundle);
+            nc.navigate(R.id.action_registerFragment_to_homeActivity, bundle);
         }
     }
 }
