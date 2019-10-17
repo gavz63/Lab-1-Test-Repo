@@ -4,6 +4,7 @@ import android.content.Context;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
+import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -11,11 +12,10 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
-import edu.uw.tcss450.phishapp.dummy.DummyContent;
-import edu.uw.tcss450.phishapp.dummy.DummyContent.DummyItem;
-
-import java.util.List;
+import edu.uw.tcss450.phishapp.blog.BlogGenerator;
+import edu.uw.tcss450.phishapp.blog.BlogPost;
 
 /**
  * A fragment representing a list of Items.
@@ -29,7 +29,6 @@ public class BlogFragment extends Fragment {
     private static final String ARG_COLUMN_COUNT = "column-count";
     // TODO: Customize parameters
     private int mColumnCount = 1;
-    private OnListFragmentInteractionListener mListener;
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -71,27 +70,17 @@ public class BlogFragment extends Fragment {
             } else {
                 recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
             }
-            recyclerView.setAdapter(new MyBlogRecyclerViewAdapter(DummyContent.ITEMS, mListener));
+            recyclerView.setAdapter(new MyBlogRecyclerViewAdapter(BlogGenerator.BLOGS, this::showBlogPost));
         }
         return view;
     }
 
+    private void showBlogPost(final BlogPost theBlogPost) {
+        final Bundle args = new Bundle();
+        args.putSerializable(getString(R.string.blog_key), theBlogPost);
 
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        if (context instanceof OnListFragmentInteractionListener) {
-            mListener = (OnListFragmentInteractionListener) context;
-        } else {
-            throw new RuntimeException(context.toString()
-                    + " must implement OnListFragmentInteractionListener");
-        }
-    }
-
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        mListener = null;
+        Navigation.findNavController(getView())
+                .navigate(R.id.action_nav_blog_to_blogPostFragment, args);
     }
 
     /**
@@ -106,6 +95,6 @@ public class BlogFragment extends Fragment {
      */
     public interface OnListFragmentInteractionListener {
         // TODO: Update argument type and name
-        void onListFragmentInteraction(DummyItem item);
+        void onListFragmentInteraction(BlogPost item);
     }
 }

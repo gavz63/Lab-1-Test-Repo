@@ -20,15 +20,15 @@
 
             <TextView
                 android:id="@+id/blog_title"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="@dimen/text_margin"
-                android:textColor="@color/cardview_light_background"
-                android:textAppearance="?attr/textAppearanceListItem" />
+                android:textAppearance="?attr/textAppearanceListItem"
+                android:textColor="@color/cardview_light_background" />
 
             <TextView
                 android:id="@+id/blog_date"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="@dimen/text_margin"
                 android:textColor="@color/colorAccent"
@@ -36,12 +36,18 @@
 
             <TextView
                 android:id="@+id/blog_teaser"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="@dimen/text_margin"
                 android:textColor="@color/cardview_light_background"
-                android:maxLines="5"
                 android:textAppearance="?attr/textAppearanceListItem" />
+
+            <Button
+                android:id="@+id/button_full_post"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/full_content"
+                android:textColor="@color/cardview_light_background"/>
 
         </LinearLayout>
     </androidx.cardview.widget.CardView>

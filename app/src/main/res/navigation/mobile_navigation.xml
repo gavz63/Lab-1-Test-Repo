@@ -15,6 +15,15 @@
         android:id="@+id/nav_blog"
         android:name="edu.uw.tcss450.phishapp.BlogFragment"
         android:label="@string/menu_blog"
-        tools:layout="@layout/fragment_blog_list" />
+        tools:layout="@layout/fragment_blog_list" >
+        <action
+            android:id="@+id/action_nav_blog_to_blogPostFragment"
+            app:destination="@id/blogPostFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/blogPostFragment"
+        android:name="edu.uw.tcss450.phishapp.BlogPostFragment"
+        android:label="fragment_blog_post"
+        tools:layout="@layout/fragment_blog_post" />
 
 </navigation>

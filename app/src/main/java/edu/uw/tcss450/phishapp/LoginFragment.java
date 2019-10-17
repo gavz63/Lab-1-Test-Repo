@@ -141,12 +141,7 @@ public class LoginFragment extends Fragment {
         NavController nc = Navigation.findNavController(getView());
 
         NavDestination nd = nc.getCurrentDestination();
-
-        if (nd.getId() != R.id.loginFragment) {
-            nc.navigateUp();
-        } else {
-            nc.navigate(R.id.action_loginFragment_to_homeActivity, bundle);
-        }
+        nc.navigate(R.id.action_loginFragment_to_homeActivity, bundle);
     }
 
     private void onRegisterClicked() {
