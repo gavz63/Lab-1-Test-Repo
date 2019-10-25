@@ -5,6 +5,8 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -63,16 +65,12 @@ public class SuccessFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        Bundle bundle = this.getArguments();
-        if (bundle != null) {
-            Serializable serializable = bundle.getSerializable(getString(R.string.credentials_key));
-            if (serializable instanceof Credentials) {
-                Credentials cr = (Credentials) serializable;
-                String email = cr.getEmail() != null ? cr.getEmail() : "oops";
+        HomeActivityArgs args = HomeActivityArgs.fromBundle(getArguments());
+        Credentials credentials = args.getCredentials();
+        ((TextView) getActivity().findViewById(R.id.success_email)).
+                setText(credentials.getEmail());
+        String jwt = args.getJwt();
+        Log.d("JWT", jwt);
 
-                TextView tv = view.findViewById(R.id.success_email);
-                tv.setText(email);
-            }
-        }
     }
 }

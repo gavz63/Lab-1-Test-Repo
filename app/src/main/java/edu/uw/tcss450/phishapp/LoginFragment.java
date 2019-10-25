@@ -1,5 +1,6 @@
 package edu.uw.tcss450.phishapp;
 
+import android.net.Uri;
 import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -7,13 +8,21 @@ import androidx.fragment.app.Fragment;
 import androidx.navigation.NavController;
 import androidx.navigation.NavDestination;
 import androidx.navigation.Navigation;
+
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.Serializable;
 import edu.uw.tcss450.phishapp.model.Credentials;
+import edu.uw.tcss450.phishapp.utils.SendPostAsyncTask;
 
 // Joement 10/08/2019 added to this for test 4.
 // Joel's comment 10/08/2019 - 2
@@ -28,6 +37,7 @@ public class LoginFragment extends Fragment {
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
+    private Credentials mCredentials;
 
     public LoginFragment() {
         // Required empty public constructor
@@ -74,8 +84,8 @@ public class LoginFragment extends Fragment {
         //Comment out this block before going to prod
         EditText email = view.findViewById(R.id.login_email);
         EditText pass = view.findViewById(R.id.login_pass);
-        email.setText("gavz63@uw.edu");
-        pass.setText("poopenstein");
+        email.setText("test@test");
+        pass.setText("test123");
 
         Button b = view.findViewById(R.id.button_login_register);
         b.setOnClickListener(v -> this.onRegisterClicked());
@@ -92,12 +102,30 @@ public class LoginFragment extends Fragment {
         boolean passErrors = passwordErrors(passView);
 
         if (!emailErrors && !passErrors) {
-            Credentials.Builder builder =
-                    new Credentials
-                            .Builder(emailView.getText().toString(),
-                            passView.getText().toString());
+            Credentials credentials = new Credentials.Builder(
+                    emailView.getText().toString(),
+                    passView.getText().toString())
+                    .build();
 
-            onLoginSuccess(builder.build(), "");
+            //build the web service URL
+            Uri uri = new Uri.Builder()
+                    .scheme("https")
+                    .appendPath(getString(R.string.ep_base_url))
+                    .appendPath(getString(R.string.ep_login))
+                    .build();
+
+            //build the JSONObject
+            JSONObject msg = credentials.asJSONObject();
+
+            mCredentials = credentials;
+
+            //instantiate and execute the AsyncTask.
+            new SendPostAsyncTask.Builder(uri.toString(), msg)
+                    .onPreExecute(this::handleLoginOnPre)
+                    .onPostExecute(this::handleLoginOnPost)
+                    .onCancelled(this::handleErrorsInTask)
+                    .build().execute();
+
         }
     }
 
@@ -135,13 +163,14 @@ public class LoginFragment extends Fragment {
 // Send shivers down your spine.
 
     private void onLoginSuccess(Credentials theCredentials, String jwt) {
-        Bundle bundle = new Bundle();
-        bundle.putSerializable(getString(R.string.credentials_key), theCredentials);
+        LoginFragmentDirections.ActionLoginFragmentToHomeActivity homeActivity =
+                LoginFragmentDirections.actionLoginFragmentToHomeActivity(new Credentials.Builder(
+                        ((EditText) getView().findViewById(R.id.login_email)).getText().toString(),
+                        ((EditText) getView().findViewById(R.id.login_pass)).getText().toString())
+                        .build());
+        homeActivity.setJwt("Will get a token from the WS later" /*jwt*/);
+        Navigation.findNavController(getView()).navigate(homeActivity);
 
-        NavController nc = Navigation.findNavController(getView());
-
-        NavDestination nd = nc.getCurrentDestination();
-        nc.navigate(R.id.action_loginFragment_to_homeActivity, bundle);
     }
 
     private void onRegisterClicked() {
@@ -177,4 +206,64 @@ public class LoginFragment extends Fragment {
             }
         }
     }
+
+    /**
+     * Handle errors that may occur during the AsyncTask.
+     * @param result the error message provide from the AsyncTask
+     */
+    private void handleErrorsInTask(String result) {
+        Log.e("ASYNC_TASK_ERROR",  result);
+    }
+
+    /**
+     * Handle the setup of the UI before the HTTP call to the webservice.
+     */
+    private void handleLoginOnPre() {
+        getActivity().findViewById(R.id.layout_login_wait).setVisibility(View.VISIBLE);
+    }
+
+    /**
+     * Handle onPostExecute of the AsynceTask. The result from our webservice is
+     * a JSON formatted String. Parse it for success or failure.
+     * @param result the JSON formatted String response from the web service
+     */
+    private void handleLoginOnPost(String result) {
+        try {
+            JSONObject resultsJSON = new JSONObject(result);
+            boolean success =
+                    resultsJSON.getBoolean(
+                            getString(R.string.keys_json_login_success));
+
+            if (success) {
+                LoginFragmentDirections
+                        .ActionLoginFragmentToHomeActivity homeActivity =
+                        LoginFragmentDirections
+                                .actionLoginFragmentToHomeActivity(mCredentials);
+                homeActivity.setJwt(
+                        resultsJSON.getString(
+                                getString(R.string.keys_json_login_jwt)));
+                Navigation.findNavController(getView())
+                        .navigate(homeActivity);
+                return;
+            } else {
+                //Login was unsuccessful. Don’t switch fragments and
+                // inform the user
+                ((TextView) getView().findViewById(R.id.login_email))
+                        .setError("Login Unsuccessful");
+            }
+            getActivity().findViewById(R.id.layout_login_wait)
+                    .setVisibility(View.GONE);
+        } catch (JSONException e) {
+            //It appears that the web service did not return a JSON formatted
+            //String or it did not have what we expected in it.
+            Log.e("JSON_PARSE_ERROR",  result
+                    + System.lineSeparator()
+                    + e.getMessage());
+            getActivity().findViewById(R.id.layout_login_wait)
+                    .setVisibility(View.GONE);
+            ((TextView) getView().findViewById(R.id.login_email))
+                    .setError("Login Unsuccessful");
+        }
+    }
+
 }

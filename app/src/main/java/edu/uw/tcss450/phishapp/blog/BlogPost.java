@@ -1,5 +1,8 @@
 package edu.uw.tcss450.phishapp.blog;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import java.io.Serializable;
 
 /**
@@ -11,13 +14,47 @@ import java.io.Serializable;
  * @author Charles Bryan
  * @version 14 September 2018
  */
-public class BlogPost implements Serializable {
+public class BlogPost implements Serializable, Parcelable {
 
     private final String mPubDate;
     private final String mTitle;
     private final String mUrl;
     private final String mTeaser;
     private final String mAuthor;
+
+    protected BlogPost(Parcel in) {
+        mPubDate = in.readString();
+        mTitle = in.readString();
+        mUrl = in.readString();
+        mTeaser = in.readString();
+        mAuthor = in.readString();
+    }
+
+    public static final Creator<BlogPost> CREATOR = new Creator<BlogPost>() {
+        @Override
+        public BlogPost createFromParcel(Parcel in) {
+            return new BlogPost(in);
+        }
+
+        @Override
+        public BlogPost[] newArray(int size) {
+            return new BlogPost[size];
+        }
+    };
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(mPubDate);
+        dest.writeString(mTitle);
+        dest.writeString(mUrl);
+        dest.writeString(mTeaser);
+        dest.writeString(mAuthor);
+    }
 
     /**
      * Helper class for building Credentials.

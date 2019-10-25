@@ -35,9 +35,11 @@ public class MyBlogRecyclerViewAdapter extends RecyclerView.Adapter<MyBlogRecycl
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
         holder.mItem = mValues.get(position);
-        holder.mTitleView.setText(mValues.get(position).getTitle());
-        holder.mPubDateView.setText(mValues.get(position).getPubDate());
-        holder.mTeaserView.setText(Html.fromHtml(mValues.get(position).getTeaser()));
+        if (holder.mItem != null) {
+            holder.mTitleView.setText(mValues.get(position).getTitle());
+            holder.mPubDateView.setText(mValues.get(position).getPubDate());
+            holder.mTeaserView.setText(Html.fromHtml(mValues.get(position).getTeaser()));
+        }
 
         holder.mView.setOnClickListener(new View.OnClickListener() {
             @Override

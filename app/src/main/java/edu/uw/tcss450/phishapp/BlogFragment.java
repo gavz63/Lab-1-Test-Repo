@@ -14,6 +14,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 import edu.uw.tcss450.phishapp.blog.BlogGenerator;
 import edu.uw.tcss450.phishapp.blog.BlogPost;
 
@@ -29,6 +33,7 @@ public class BlogFragment extends Fragment {
     private static final String ARG_COLUMN_COUNT = "column-count";
     // TODO: Customize parameters
     private int mColumnCount = 1;
+    private List<BlogPost> mBlogs;
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -51,10 +56,10 @@ public class BlogFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        if (getArguments() != null) {
-            mColumnCount = getArguments().getInt(ARG_COLUMN_COUNT);
-        }
+        BlogFragmentArgs args = BlogFragmentArgs.fromBundle(getArguments());
+        mBlogs = new ArrayList<>(Arrays.asList(args.getBlogs()));
     }
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -70,7 +75,7 @@ public class BlogFragment extends Fragment {
             } else {
                 recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
             }
-            recyclerView.setAdapter(new MyBlogRecyclerViewAdapter(BlogGenerator.BLOGS, this::showBlogPost));
+            recyclerView.setAdapter(new MyBlogRecyclerViewAdapter(mBlogs, this::showBlogPost));
         }
         return view;
     }
