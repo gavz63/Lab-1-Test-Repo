@@ -30,6 +30,7 @@ import org.json.JSONObject;
 import java.util.Arrays;
 
 import edu.uw.tcss450.phishapp.blog.BlogPost;
+import edu.uw.tcss450.phishapp.setlist.SetList;
 import edu.uw.tcss450.phishapp.utils.GetAsyncTask;
 
 public class HomeActivity extends AppCompatActivity {
@@ -48,7 +49,7 @@ public class HomeActivity extends AppCompatActivity {
         // Passing each menu ID as a set of Ids because each
         // menu should be considered as top level destinations.
         mAppBarConfiguration = new AppBarConfiguration.Builder(
-                R.id.nav_home, R.id.nav_blog)
+                R.id.nav_home, R.id.nav_blog, R.id.nav_setlists)
                 .setDrawerLayout(drawer)
                 .build();
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
@@ -92,8 +93,7 @@ public class HomeActivity extends AppCompatActivity {
                     for(int i = 0; i < data.length(); i++) {
                         JSONObject jsonBlog = data.getJSONObject(i);
 
-                        blogs = Arrays.copyOf(blogs, blogs.length + 1);
-                        blogs[blogs.length - 1] = new BlogPost.Builder(
+                        blogs[i] = new BlogPost.Builder(
                                 jsonBlog.getString(
                                         getString(R.string.keys_json_blogs_pubdate)),
                                 jsonBlog.getString(
@@ -123,6 +123,57 @@ public class HomeActivity extends AppCompatActivity {
         }
     }
 
+    private void handleSetListGetOnPostExecute(final String result) {
+        //parse JSON
+
+        try {
+            JSONObject root = new JSONObject(result);
+            if (root.has(getString(R.string.keys_json_blogs_response))) {
+                JSONObject response = root.getJSONObject(
+                        getString(R.string.keys_json_blogs_response));
+                if (response.has(getString(R.string.keys_json_blogs_data))) {
+                    JSONArray data = response.getJSONArray(
+                            getString(R.string.keys_json_blogs_data));
+
+                    SetList[] setLists = new SetList[data.length()];
+                    for(int i = 0; i < data.length(); i++) {
+                        JSONObject jsonSetList = data.getJSONObject(i);
+
+                        setLists[i] = new SetList.Builder(
+                                jsonSetList.getString(
+                                        getString(R.string.keys_json_setlists_date)),
+                                jsonSetList.getString(
+                                        getString(R.string.keys_json_setlists_location)))
+                                .addVenue(jsonSetList.getString(
+                                        getString(R.string.keys_json_setlists_venue)))
+                                .addUrl(jsonSetList.getString(
+                                        getString(R.string.keys_json_setlists_url)))
+                                .addData(jsonSetList.getString(
+                                        getString(R.string.keys_json_setlists_data)))
+                                .addNotes(jsonSetList.getString(
+                                        getString(R.string.keys_json_setlists_notes)))
+                                .build();
+                    }
+
+
+                    MobileNavigationDirections.ActionGlobalNavSetlists directions =
+                            SetListFragmentDirections.actionGlobalNavSetlists(setLists);
+
+                    Navigation.findNavController(this, R.id.nav_host_fragment)
+                            .navigate(directions);
+                } else {
+                    Log.e("ERROR!", "No data array");
+                }
+            } else {
+                Log.e("ERROR!", "No response");
+            }
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+            Log.e("ERROR!", e.getMessage());
+        }
+    }
+
     private boolean onNavigationSelected(final MenuItem menuItem) {
         NavController navController =
                 Navigation.findNavController(this, R.id.nav_host_fragment);
@@ -131,7 +182,7 @@ public class HomeActivity extends AppCompatActivity {
                 navController.navigate(R.id.nav_home, getIntent().getExtras());
                 break;
             case R.id.nav_blog:
-                Uri uri = new Uri.Builder()
+                Uri blogUri = new Uri.Builder()
                         .scheme("https")
                         .appendPath(getString(R.string.ep_base_url))
                         .appendPath(getString(R.string.ep_phish))
@@ -139,8 +190,21 @@ public class HomeActivity extends AppCompatActivity {
                         .appendPath(getString(R.string.ep_get))
                         .build();
 
-                new GetAsyncTask.Builder(uri.toString())
+                new GetAsyncTask.Builder(blogUri.toString())
                         .onPostExecute(this::handleBlogGetOnPostExecute)
+                        .addHeaderField("authorization", mJwToken) //add the JWT as a header
+                        .build().execute();
+                break;
+            case R.id.nav_setlists:
+                Uri setListUri = new Uri.Builder()
+                        .scheme("https")
+                        .appendPath(getString(R.string.ep_base_url))
+                        .appendPath(getString(R.string.ep_phish))
+                        .appendPath(getString(R.string.ep_setlists))
+                        .appendPath(getString(R.string.ep_recent))
+                        .build();
+                new GetAsyncTask.Builder(setListUri.toString())
+                        .onPostExecute(this::handleSetListGetOnPostExecute)
                         .addHeaderField("authorization", mJwToken) //add the JWT as a header
                         .build().execute();
                 break;
@@ -149,5 +213,4 @@ public class HomeActivity extends AppCompatActivity {
         ((DrawerLayout) findViewById(R.id.drawer_layout)).closeDrawers();
         return true;
     }
-
 }

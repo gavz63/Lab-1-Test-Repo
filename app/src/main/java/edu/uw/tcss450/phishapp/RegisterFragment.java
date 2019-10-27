@@ -1,22 +1,35 @@
 package edu.uw.tcss450.phishapp;
 
+import android.content.Context;
+import android.net.Uri;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.NavController;
-import androidx.navigation.NavDestination;
 import androidx.navigation.Navigation;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 
-import edu.uw.tcss450.phishapp.model.Credentials;
+import org.json.JSONException;
+import org.json.JSONObject;
 
+import edu.uw.tcss450.phishapp.model.Credentials;
+import edu.uw.tcss450.phishapp.utils.SendPostAsyncTask;
+
+/**
+ * A simple {@link Fragment} subclass.
+ * Activities that contain this fragment must implement the
+ * to handle interaction events.
+ * Use the {@link RegisterFragment#newInstance} factory method to
+ * create an instance of this fragment.
+ */
 public class RegisterFragment extends Fragment {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -26,6 +39,20 @@ public class RegisterFragment extends Fragment {
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
+
+    private Credentials mCredentials;
+    private EditText mFirstNameField;
+    private EditText mLastNameField;
+    private EditText mNicknameField;
+    private EditText mEmailField;
+    private EditText mPasswordField;
+    private EditText mPasswordConfirmField;
+    private String mFirstNameString;
+    private String mLastNameString;
+    private String mNicknameString;
+    private String mEmailString;
+    private String mPasswordString;
+    private String mPasswordConfirmString;
 
     public RegisterFragment() {
         // Required empty public constructor
@@ -69,74 +96,155 @@ public class RegisterFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        mFirstNameField = view.findViewById(R.id.first_name);
+        mLastNameField = view.findViewById(R.id.last_name);
+        mNicknameField = view.findViewById(R.id.username);
+        mEmailField = view.findViewById(R.id.register_email);
+        mPasswordField = view.findViewById(R.id.register_pass);
+        mPasswordConfirmField = view.findViewById(R.id.register_re_pass);
+
         Button b = view.findViewById(R.id.button_register_register);
-        b.setOnClickListener(v -> this.validateRegistration(view));
+        b.setOnClickListener(this::validateRegistration);
     }
 
     private void validateRegistration(View view) {
-        EditText emailView = view.findViewById(R.id.register_email);
-        EditText passView = view.findViewById(R.id.register_pass);
-        EditText retypePassView = view.findViewById(R.id.register_re_pass);
+        mFirstNameString = mFirstNameField.getText().toString();
+        mLastNameString = mLastNameField.getText().toString();
+        mNicknameString = mNicknameField.getText().toString();
+        mEmailString = mEmailField.getText().toString();
+        mPasswordString = mPasswordField.getText().toString();
+        mPasswordConfirmString = mPasswordConfirmField.getText().toString();
 
-        boolean emailErrors = emailErrors(emailView);
-        boolean passErrors = passwordErrors(passView, retypePassView);
+        if (!anyErrors()) {
+            mCredentials = new Credentials.Builder(mEmailString, mPasswordString)
+                    .addFirstName(mFirstNameString)
+                    .addLastName(mLastNameString)
+                    .addUsername(mNicknameString)
+                    .build();
 
-        if (!emailErrors && !passErrors) {
-            onRegisterSuccess(new Credentials.
-                    Builder(emailView.getText().toString(),
-                            passView.getText().toString()).build());
+            Uri uri = new Uri.Builder()
+                    .scheme("https")
+                    .appendPath(getString(R.string.ep_base_url))
+                    .appendPath(getString(R.string.ep_register))
+                    .build();
+
+            //build the JSONObject
+            JSONObject msg = mCredentials.asJSONObject();
+
+            //instantiate and execute the AsyncTask.
+            new SendPostAsyncTask.Builder(uri.toString(), msg)
+                    .onPreExecute(this::handleRegisterOnPre)
+                    .onPostExecute(this::handleRegisterOnPost)
+                    .onCancelled(this::handleErrorsInTask)
+                    .build().execute();
         }
     }
 
-    private boolean emailErrors(EditText theEmailField) {
-        String email = theEmailField.getText().toString();
+    private boolean anyErrors() {
+        boolean anyErrors = false;
 
-        if (email.equals("") || !email.contains("@")) {
-            if (email.equals("")) {
-                theEmailField.setError("Email cannot be empty");
-            }
-            if (!email.contains("@")) {
-                theEmailField.setError("Please enter a valid email (Use an @)");
-            }
-            return true;
+        if (mFirstNameString != "") {
+            mFirstNameField.setError(null);
         } else {
-            theEmailField.setError(null);
-            return false;
+            mFirstNameField.setError("Please enter your first name");
         }
+
+        if (mLastNameString != "") {
+            mLastNameField.setError(null);
+        } else {
+            mLastNameField.setError("Please enter your first name");
+        }
+
+        if (mNicknameString != "") {
+            mNicknameField.setError(null);
+        } else {
+            mNicknameField.setError("Please enter your first name");
+        }
+
+        //If email does not contain exactly one '@'
+        if (mEmailString.length() - mEmailString.replace("@", "").length() != 1) {
+            //If email is empty
+            if (mEmailField.equals("")) {
+                mEmailField.setError("Email cannot be empty");
+            } else {
+                mEmailField.setError("Please enter a valid email");
+            }
+            anyErrors = true;
+        } else {
+            mEmailField.setError(null);
+        }
+
+        if (mPasswordString.length() < 6) {
+            if (mPasswordString.equals("")) {
+                mPasswordField.setError("Password cannot be empty");
+            } else {
+                mPasswordField.setError("Your password must be 6 or more characters");
+            }
+            anyErrors = true;
+        } else {
+            mPasswordField.setError(null);
+        }
+        if (!mPasswordString.equals(mPasswordConfirmString)) {
+            mPasswordConfirmField.setError("Passwords must match");
+            anyErrors = true;
+        }
+
+        return anyErrors;
     }
 
-    private boolean passwordErrors(EditText thePasswordField, EditText theRetypePasswordField) {
-        String pass = thePasswordField.getText().toString();
-        String rePass = theRetypePasswordField.getText().toString();
-        boolean toReturn = false;
-        if (pass.length() < 6) {
-            if (pass.equals("")) {
-                thePasswordField.setError("Password cannot be empty");
-            }
-            thePasswordField.setError("Your password must be 6 or more characters");
-            toReturn = true;
-        } else {
-            thePasswordField.setError(null);
-        }
-        if (!pass.equals(rePass)) {
-            theRetypePasswordField.setError("Passwords must match");
-            toReturn = true;
-        }
-        return toReturn;
+    /**
+     * Handle errors that may occur during the AsyncTask.
+     * @param result the error message provide from the AsyncTask
+     */
+    private void handleErrorsInTask(String result) {
+        Log.e("ASYNC_TASK_ERROR",  result);
     }
 
-    private void onRegisterSuccess(Credentials theCredentials) {
-        Bundle bundle = new Bundle();
-        bundle.putSerializable(getString(R.string.credentials_key), theCredentials);
+    /**
+     * Handle the setup of the UI before the HTTP call to the webservice.
+     */
+    private void handleRegisterOnPre() {
+        getActivity().findViewById(R.id.layout_register_wait).setVisibility(View.VISIBLE);
+    }
 
-        NavController nc = Navigation.findNavController(getView());
+    /**
+     * Handle onPostExecute of the AsynceTask. The result from our webservice is
+     * a JSON formatted String. Parse it for success or failure.
+     * @param result the JSON formatted String response from the web service
+     */
+    private void handleRegisterOnPost(String result) {
+        try {
+            JSONObject resultsJSON = new JSONObject(result);
+            boolean success =
+                    resultsJSON.getBoolean(
+                            getString(R.string.keys_json_register_success));
 
-        NavDestination nd = nc.getCurrentDestination();
-
-        if (nd.getId() != R.id.registerFragment) {
-            nc.navigateUp();
-        } else {
-            nc.navigate(R.id.action_registerFragment_to_homeActivity, bundle);
+            if (success) {
+                RegisterFragmentDirections.ActionRegisterFragmentToHomeActivity homeActivity =
+                        RegisterFragmentDirections
+                                .actionRegisterFragmentToHomeActivity(mCredentials);
+                homeActivity.setJwt(
+                        resultsJSON.getString(
+                                getString(R.string.keys_json_login_jwt)));
+                Navigation.findNavController(getView())
+                        .navigate(homeActivity);
+                return;
+            } else {
+                //Login was unsuccessful. Don’t switch fragments and
+                // inform the user
+                mFirstNameField.setError("Register Unsuccessful");
+            }
+            getActivity().findViewById(R.id.layout_register_wait)
+                    .setVisibility(View.GONE);
+        } catch (JSONException e) {
+            //It appears that the web service did not return a JSON formatted
+            //String or it did not have what we expected in it.
+            Log.e("JSON_PARSE_ERROR",  result
+                    + System.lineSeparator()
+                    + e.getMessage());
+            getActivity().findViewById(R.id.layout_register_wait)
+                    .setVisibility(View.GONE);
+            mFirstNameField.setError("Register Unsuccessful");
         }
     }
 }

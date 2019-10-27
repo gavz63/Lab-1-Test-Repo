@@ -6,28 +6,19 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.NavController;
-import androidx.navigation.NavDestination;
 import androidx.navigation.Navigation;
-
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.TextView;
-
 import org.json.JSONException;
 import org.json.JSONObject;
-
 import java.io.Serializable;
 import edu.uw.tcss450.phishapp.model.Credentials;
 import edu.uw.tcss450.phishapp.utils.SendPostAsyncTask;
 
-// Joement 10/08/2019 added to this for test 4.
-// Joel's comment 10/08/2019 - 2
-//Hi Joel
-//HIIIIIII JOEEEEL
 public class LoginFragment extends Fragment {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -38,6 +29,10 @@ public class LoginFragment extends Fragment {
     private String mParam1;
     private String mParam2;
     private Credentials mCredentials;
+    private EditText mEmailField;
+    private EditText mPasswordField;
+    private String mEmailString;
+    private String mPasswordString;
 
     public LoginFragment() {
         // Required empty public constructor
@@ -81,30 +76,27 @@ public class LoginFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        mEmailField = view.findViewById(R.id.login_email);
+        mPasswordField = view.findViewById(R.id.login_pass);
         //Comment out this block before going to prod
-        EditText email = view.findViewById(R.id.login_email);
-        EditText pass = view.findViewById(R.id.login_pass);
-        email.setText("test@test");
-        pass.setText("test123");
+        mEmailField.setText("test@test");
+        mPasswordField.setText("test123");
 
         Button b = view.findViewById(R.id.button_login_register);
-        b.setOnClickListener(v -> this.onRegisterClicked());
+        b.setOnClickListener(this::onRegisterClicked);
 
         b = view.findViewById(R.id.button_login_sign_in);
-        b.setOnClickListener(v -> this.validateLogin(view));
+        b.setOnClickListener(this::validateLogin);
     }
 
     private void validateLogin(View view) {
-        EditText emailView = view.findViewById(R.id.login_email);
-        EditText passView = view.findViewById(R.id.login_pass);
+        mEmailString = mEmailField.getText().toString();
+        mPasswordString = mPasswordField.getText().toString();
 
-        boolean emailErrors = emailErrors(emailView);
-        boolean passErrors = passwordErrors(passView);
 
-        if (!emailErrors && !passErrors) {
-            Credentials credentials = new Credentials.Builder(
-                    emailView.getText().toString(),
-                    passView.getText().toString())
+
+        if (!anyErrors()) {
+            mCredentials = new Credentials.Builder(mEmailString, mPasswordString)
                     .build();
 
             //build the web service URL
@@ -115,9 +107,7 @@ public class LoginFragment extends Fragment {
                     .build();
 
             //build the JSONObject
-            JSONObject msg = credentials.asJSONObject();
-
-            mCredentials = credentials;
+            JSONObject msg = mCredentials.asJSONObject();
 
             //instantiate and execute the AsyncTask.
             new SendPostAsyncTask.Builder(uri.toString(), msg)
@@ -129,60 +119,36 @@ public class LoginFragment extends Fragment {
         }
     }
 
-    private boolean emailErrors(EditText theEmailField) {
-        String email = theEmailField.getText().toString();
-        boolean toReturn = false;
+    private boolean anyErrors() {
+        boolean anyErrors = false;
 
-        if (!email.contains("@")) {
-            theEmailField.setError("Please enter a valid email (Use an @)");
-            if (email.equals("")) {
-                theEmailField.setError("Email cannot be empty");
+        //If email does not contain exactly one '@'
+        if (mEmailString.length() - mEmailString.replace("@", "").length() != 1) {
+            //If email is empty
+            if (mEmailField.equals("")) {
+                mEmailField.setError("Email cannot be empty");
+            } else {
+                mEmailField.setError("Please enter a valid email");
             }
-            toReturn = true;
+            anyErrors = true;
         } else {
-            theEmailField.setError(null);
+            mEmailField.setError(null);
         }
 
-        return toReturn;
-    }
-
-    private boolean passwordErrors(EditText thePasswordField) {
-        String pass = thePasswordField.getText().toString();
-        boolean toReturn = false;
-
-        if (pass.equals("")) {
-            thePasswordField.setError("Password cannot be empty");
-            toReturn = true;
+        if (mPasswordString.equals("")) {
+            mPasswordField.setError("Password should not be empty");
+            anyErrors = true;
         } else {
-            thePasswordField.setError(null);
+            mPasswordField.setError(null);
         }
 
-        return toReturn;
-    }
-//Spooky scary skeletons
-// Send shivers down your spine.
-
-    private void onLoginSuccess(Credentials theCredentials, String jwt) {
-        LoginFragmentDirections.ActionLoginFragmentToHomeActivity homeActivity =
-                LoginFragmentDirections.actionLoginFragmentToHomeActivity(new Credentials.Builder(
-                        ((EditText) getView().findViewById(R.id.login_email)).getText().toString(),
-                        ((EditText) getView().findViewById(R.id.login_pass)).getText().toString())
-                        .build());
-        homeActivity.setJwt("Will get a token from the WS later" /*jwt*/);
-        Navigation.findNavController(getView()).navigate(homeActivity);
-
+        return anyErrors;
     }
 
-    private void onRegisterClicked() {
+    private void onRegisterClicked(View view) {
         NavController nc = Navigation.findNavController(getView());
 
-        NavDestination nd = nc.getCurrentDestination();
-
-        if (nd.getId() != R.id.loginFragment) {
-            nc.navigateUp();
-        } else {
-            nc.navigate(R.id.action_loginFragment_to_registerFragment);
-        }
+        nc.navigate(R.id.action_loginFragment_to_registerFragment);
     }
 
     @Override
@@ -193,16 +159,12 @@ public class LoginFragment extends Fragment {
         if (bundle != null) {
             Serializable serializable = bundle.getSerializable(getString(R.string.credentials_key));
             if (serializable instanceof Credentials) {
-                View v = getView();
-                EditText emailView = v.findViewById(R.id.login_email);
-                EditText passView = v.findViewById(R.id.login_pass);
-
                 Credentials cr = (Credentials) serializable;
                 String email = cr.getEmail() != null ? cr.getEmail() : "oops";
                 String pass = cr.getPassword() != null ? cr.getPassword() : "oops";
 
-                emailView.setText(email);
-                passView.setText(pass);
+                mEmailField.setText(email);
+                mPasswordField.setText(pass);
             }
         }
     }
@@ -248,8 +210,7 @@ public class LoginFragment extends Fragment {
             } else {
                 //Login was unsuccessful. Don’t switch fragments and
                 // inform the user
-                ((TextView) getView().findViewById(R.id.login_email))
-                        .setError("Login Unsuccessful");
+                mEmailField.setError("Login Unsuccessful");
             }
             getActivity().findViewById(R.id.layout_login_wait)
                     .setVisibility(View.GONE);
@@ -261,8 +222,7 @@ public class LoginFragment extends Fragment {
                     + e.getMessage());
             getActivity().findViewById(R.id.layout_login_wait)
                     .setVisibility(View.GONE);
-            ((TextView) getView().findViewById(R.id.login_email))
-                    .setError("Login Unsuccessful");
+            mEmailField.setError("Login Unsuccessful");
         }
     }
 

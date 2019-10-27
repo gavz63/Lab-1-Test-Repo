@@ -9,6 +9,9 @@
     <string name="pass">Password</string>
     <string name="re_pass">Retype Password</string>
     <string name="credentials_key">Credentials Key</string>
+    <string name="first_name">First Name</string>
+    <string name="last_name">Last Name</string>
+    <string name="username">Username</string>
 
     <string name="login_frag">Login Fragment</string>
     <string name="register_frag">Register Fragment</string>
@@ -23,6 +26,7 @@
 
     <string name="menu_home">Home</string>
     <string name="menu_blog">Blog Posts</string>
+    <string name="menu_setlists">Set Lists</string>
     <string name="full_content">Full Content</string>
     <string name="blog_key">Blog Blog Blog</string>
     <!-- TODO: Remove or change this placeholder text -->

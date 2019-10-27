@@ -7,10 +7,20 @@
     <string name="keys_json_login_success">success</string>
     <string name="keys_json_login_jwt">token</string>
 
+    <string name="keys_json_register_success">success</string>
+
     <string name="keys_json_blogs_response">response</string>
     <string name="keys_json_blogs_data">data</string>
     <string name="keys_json_blogs_pubdate">pubdate</string>
     <string name="keys_json_blogs_title">title</string>
     <string name="keys_json_blogs_teaser">teaser</string>
     <string name="keys_json_blogs_url">url</string>
+    
+    <string name="keys_json_setlists_date">long_date</string>
+    <string name="keys_json_setlists_location">location</string>
+    <string name="keys_json_setlists_venue">venue</string>
+    <string name="keys_json_setlists_data">setlistdata</string>
+    <string name="keys_json_setlists_notes">setlistnotes</string>
+    <string name="keys_json_setlists_url">url</string>
+
 </resources>

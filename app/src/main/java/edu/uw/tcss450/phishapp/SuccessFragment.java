@@ -5,13 +5,11 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import java.io.Serializable;
 
 public class SuccessFragment extends Fragment {
     // TODO: Rename parameter arguments, choose names that match
@@ -22,6 +20,9 @@ public class SuccessFragment extends Fragment {
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
+
+    private Credentials mCredentials;
+    private String mJwt;
 
     public SuccessFragment() {
         // Required empty public constructor
@@ -48,6 +49,13 @@ public class SuccessFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        HomeActivityArgs args = HomeActivityArgs.fromBundle(getArguments());
+        if (args != null) {
+            mCredentials = args.getCredentials();
+            mJwt = args.getJwt();
+        }
+
         if (getArguments() != null) {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
@@ -65,12 +73,9 @@ public class SuccessFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        HomeActivityArgs args = HomeActivityArgs.fromBundle(getArguments());
-        Credentials credentials = args.getCredentials();
-        ((TextView) getActivity().findViewById(R.id.success_email)).
-                setText(credentials.getEmail());
-        String jwt = args.getJwt();
-        Log.d("JWT", jwt);
-
+        TextView label = getActivity().findViewById(R.id.success_email);
+        String text = label.getText().toString();
+        label.setText(mCredentials.getEmail());
+        Log.d("JWT", mJwt);
     }
 }

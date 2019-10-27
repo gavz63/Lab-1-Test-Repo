@@ -27,6 +27,26 @@
         android:id="@+id/blogPostFragment"
         android:name="edu.uw.tcss450.phishapp.BlogPostFragment"
         android:label="fragment_blog_post"
-        tools:layout="@layout/fragment_blog_post" /><action android:id="@+id/action_global_nav_blog" app:destination="@id/nav_blog"/>
+        tools:layout="@layout/fragment_blog_post" />
+    <fragment
+        android:id="@+id/nav_setlists"
+        android:name="edu.uw.tcss450.phishapp.SetListFragment"
+        android:label="fragment_setlist_list"
+        tools:layout="@layout/fragment_setlist_list" >
+
+        <argument
+            android:name="set_lists"
+            app:argType="edu.uw.tcss450.phishapp.setlist.SetList[]" />
+        <action
+            android:id="@+id/action_nav_setlists_to_setListViewFragment"
+            app:destination="@id/setListViewFragment" />
+    </fragment>
+    <action android:id="@+id/action_global_nav_blog" app:destination="@id/nav_blog" />
+    <action android:id="@+id/action_global_nav_setlists" app:destination="@id/nav_setlists" />
+    <fragment
+        android:id="@+id/setListViewFragment"
+        android:name="edu.uw.tcss450.phishapp.SetListViewFragment"
+        android:label="fragment_set_list_view"
+        tools:layout="@layout/fragment_set_list_view" />
 
 </navigation>
