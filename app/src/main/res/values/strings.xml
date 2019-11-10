@@ -29,6 +29,9 @@
     <string name="menu_setlists">Set Lists</string>
     <string name="full_content">Full Content</string>
     <string name="blog_key">Blog Blog Blog</string>
+    <string name="action_logout">Logout</string>
+
+    <string name="menu_chat">Global Chat</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
 

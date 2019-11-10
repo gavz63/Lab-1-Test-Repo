@@ -4,7 +4,7 @@ android {
     compileSdkVersion 29
     buildToolsVersion "29.0.2"
     defaultConfig {
-        applicationId "edu.uw.tcss450.phishapp"
+        applicationId "edu.uw.gavz63.tcss450.phishapp"
         minSdkVersion 24
         targetSdkVersion 29
         versionCode 1
@@ -37,4 +37,5 @@ dependencies {
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.1.1'
     implementation 'androidx.navigation:navigation-fragment:2.0.0'
     implementation 'androidx.navigation:navigation-ui:2.1.0'
+    implementation 'me.pushy:sdk:1.0.53'
 }

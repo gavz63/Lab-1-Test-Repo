@@ -1,13 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources tools:ignore="ExtraTranslation" xmlns:tools="http://schemas.android.com/tools">
-    <string name="keys_shared_prefs">edu.uw.tcss450.challengeapp.PREFS</string>
+    <string name="keys_shared_prefs">edu.uw.gavz63.tcss450.phishapp.PREFS</string>
     <string name="keys_prefs_username">username</string>
     <string name="keys_prefs_stay_logged_in">loggedIn</string>
+    <string name="keys_prefs_email">taffic_light_wont_let_me_through</string>
+    <string name="keys_prefs_password">see_the_city_see_the_zoo</string>
 
     <string name="keys_json_login_success">success</string>
     <string name="keys_json_login_jwt">token</string>
 
     <string name="keys_json_register_success">success</string>
+    <string name="keys_json_register_err">error</string>
 
     <string name="keys_json_blogs_response">response</string>
     <string name="keys_json_blogs_data">data</string>
@@ -22,5 +25,4 @@
     <string name="keys_json_setlists_data">setlistdata</string>
     <string name="keys_json_setlists_notes">setlistnotes</string>
     <string name="keys_json_setlists_url">url</string>
-
 </resources>

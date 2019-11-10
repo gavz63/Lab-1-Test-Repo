@@ -7,13 +7,21 @@
 
     <fragment
         android:id="@+id/nav_home"
-        android:name="edu.uw.tcss450.phishapp.SuccessFragment"
+        android:name="edu.uw.gavz63.tcss450.phishapp.SuccessFragment"
         android:label="@string/menu_home"
-        tools:layout="@layout/fragment_success" />
+        tools:layout="@layout/fragment_success" >
+        <argument
+            android:name="credentials"
+            app:argType="edu.uw.gavz63.tcss450.phishapp.model.Credentials" />
+        <argument
+            android:name="jwt"
+            app:argType="string"
+            android:defaultValue='""' />
+    </fragment>
 
     <fragment
         android:id="@+id/nav_blog"
-        android:name="edu.uw.tcss450.phishapp.BlogFragment"
+        android:name="edu.uw.gavz63.tcss450.phishapp.BlogFragment"
         android:label="@string/menu_blog"
         tools:layout="@layout/fragment_blog_list" >
         <action
@@ -21,22 +29,22 @@
             app:destination="@id/blogPostFragment" />
         <argument
             android:name="blogs"
-            app:argType="edu.uw.tcss450.phishapp.blog.BlogPost[]" />
+            app:argType="edu.uw.gavz63.tcss450.phishapp.blog.BlogPost[]" />
     </fragment>
     <fragment
         android:id="@+id/blogPostFragment"
-        android:name="edu.uw.tcss450.phishapp.BlogPostFragment"
+        android:name="edu.uw.gavz63.tcss450.phishapp.BlogPostFragment"
         android:label="fragment_blog_post"
         tools:layout="@layout/fragment_blog_post" />
     <fragment
         android:id="@+id/nav_setlists"
-        android:name="edu.uw.tcss450.phishapp.SetListFragment"
+        android:name="edu.uw.gavz63.tcss450.phishapp.SetListFragment"
         android:label="fragment_setlist_list"
         tools:layout="@layout/fragment_setlist_list" >
 
         <argument
             android:name="set_lists"
-            app:argType="edu.uw.tcss450.phishapp.setlist.SetList[]" />
+            app:argType="edu.uw.gavz63.tcss450.phishapp.setlist.SetList[]" />
         <action
             android:id="@+id/action_nav_setlists_to_setListViewFragment"
             app:destination="@id/setListViewFragment" />
@@ -45,8 +53,29 @@
     <action android:id="@+id/action_global_nav_setlists" app:destination="@id/nav_setlists" />
     <fragment
         android:id="@+id/setListViewFragment"
-        android:name="edu.uw.tcss450.phishapp.SetListViewFragment"
+        android:name="edu.uw.gavz63.tcss450.phishapp.SetListViewFragment"
         android:label="fragment_set_list_view"
         tools:layout="@layout/fragment_set_list_view" />
+    <fragment
+        android:id="@+id/nav_chat"
+        android:name="edu.uw.gavz63.tcss450.phishapp.ChatFragment"
+        android:label="fragment_chat"
+        tools:layout="@layout/fragment_chat" >
+        <argument
+            android:name="jwt"
+            app:argType="string"
+            android:defaultValue='""' />
+        <argument
+            android:name="email"
+            app:argType="string"
+            android:defaultValue='""' />
+        <argument
+            android:name="message"
+            app:argType="edu.uw.gavz63.tcss450.phishapp.model.ChatMessageNotification"
+            app:nullable="true"
+            android:defaultValue="@null" />
+    </fragment>
+    <action android:id="@+id/action_global_chatFragment" app:destination="@id/nav_chat" />
+    <action android:id="@+id/action_global_nav_home" app:destination="@id/nav_home" />
 
 </navigation>

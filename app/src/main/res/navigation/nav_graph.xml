@@ -7,7 +7,7 @@
 
     <fragment
         android:id="@+id/loginFragment"
-        android:name="edu.uw.tcss450.phishapp.LoginFragment"
+        android:name="edu.uw.gavz63.tcss450.phishapp.LoginFragment"
         android:label="fragment_login"
         tools:layout="@layout/fragment_login" >
         <action
@@ -19,7 +19,7 @@
     </fragment>
     <fragment
         android:id="@+id/registerFragment"
-        android:name="edu.uw.tcss450.phishapp.RegisterFragment"
+        android:name="edu.uw.gavz63.tcss450.phishapp.RegisterFragment"
         android:label="fragment_register"
         tools:layout="@layout/fragment_register" >
         <action
@@ -31,15 +31,20 @@
     </fragment>
     <activity
         android:id="@+id/homeActivity"
-        android:name="edu.uw.tcss450.phishapp.HomeActivity"
+        android:name="edu.uw.gavz63.tcss450.phishapp.HomeActivity"
         android:label="activity_home"
         tools:layout="@layout/activity_home" >
         <argument
             android:name="credentials"
-            app:argType="edu.uw.tcss450.phishapp.model.Credentials" />
+            app:argType="edu.uw.gavz63.tcss450.phishapp.model.Credentials" />
         <argument
             android:name="jwt"
             app:argType="string"
             android:defaultValue='""' />
+        <argument
+            android:name="chatMessage"
+            app:argType="edu.uw.gavz63.tcss450.phishapp.model.ChatMessageNotification"
+            app:nullable="true"
+            android:defaultValue="@null" />
     </activity>
 </navigation>
